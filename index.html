@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap');
+    
+        *{  
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: rgb(240, 230, 175);
+        }
+        .container{
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .timebox{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15%;
+        }
+        #timer{
+            font-size: 68px;
+            text-align: center;
+            font-family: 'Bungee Spice', sans-serif;
+        }
+        .buttons{
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        button{
+            background: rgb(134,135,135);
+            background: linear-gradient(194deg, rgba(134,135,135,0.9024859943977591) 18%, rgba(84,90,87,1) 64%);
+            font-size: 32px;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s ease-in-out;
+            user-select: none;
+            outline-offset: 10px;
+        }
+        button:hover{
+            box-shadow: 0px 0px 8px red;
+        }
+        button:active{
+            transform: translateY(3px) scale(0.97);
+        }
+        ul li{
+            margin-bottom: 10px;
+            font-size: large;
+        }
+        @media only screen and (max-width: 400px) {
+            .timebox{
+                margin-top: 30%;
+            }
+            #timer{
+                font-size: 52px;
+            }      
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="timebox">
+            <div id="timer">
+                <span id="hour"></span>:<span id="minutes"></span>:<span id="seconds"></span><span id="milliseconds"></span>
+            </div>
+            <div class="buttons">
+                <button id="start">Start</button>
+                <button id="Pause">Pause</button>
+                <button id="reset">Reset</button>
+                <button id="lap">Lap</button>
+            </div>
+        </div>
+        <div>
+            <ul id="laps" style="list-style-type: none; margin-top: 40px;">
+            </ul>
+        </div>
+    </div>
+    <script>
+        let hours = 0;
+        let minutes = 0;
+        let seconds = 0;
+        let milliseconds = 0;
+        function incrementHour(){
+            hours++;
+        }
+        function incrementMinutes(){
+            minutes++;
+        }
+        function incrementSecond(){
+            seconds++;
+        }
+        function incrementMilliSecond(){
+            milliseconds++;
+        }
+        let timer = document.getElementById('timer');
+        let h = document.getElementById('hour');
+        let m = document.getElementById('minutes');
+        let s = document.getElementById('seconds');
+        let ms = document.getElementById('milliseconds');
+        s.innerHTML = `0${seconds}`;
+        m.innerText = `0${minutes}`;
+        h.innerText = `0${hours}`;
+        function mytimer(){
+                ms.innerHTML = `.${milliseconds}`;
+                console.log(milliseconds++);
+                if(milliseconds === 100){
+                    milliseconds = 0;
+                    seconds++;
+                    if(seconds === 60){
+                        s.innerHTML = `00`;
+                    }else{
+                        if(seconds<10){
+                            s.innerHTML = `0${seconds}`;
+                        }else{
+                            s.innerText = seconds;
+                        }
+                        
+                    }
+                    if(seconds === 60){
+                        seconds = 0;
+                        minutes++;
+                        if(seconds === 60){
+                            m.innerHTML = `00`;
+                        }else{
+                            if(minutes<10){
+                                m.innerHTML = `0${minutes}`;
+                            }else{
+                                m.innerText = seconds;
+                            }
+                        }
+                        console.log("minute id the key :",minutes);
+                        if(minutes === 60){
+                            minutes = 0;
+                            hours++;
+                            h.innerText = hours;
+                            console.log("hour is the key :",hours);
+                        }
+                    }
+                }
+        }
+        const pauser = document.getElementById('Pause');
+        const lap = document.getElementById('lap');
+        const reset = document.getElementById('reset');
+        const starter = document.getElementById('start');
+        pauser.style.boxShadow = "0px 0px 8px red";
+        starter.style.boxShadow = "0px 0px 8px green";
+        function start(){
+            starter.disabled = true;
+            pauser.disabled = false;
+            
+            lp=0
+            repeat = setInterval(mytimer,1_0);
+            let i = 0;
+        }
+        pauser.addEventListener('click',()=>{
+                lp = 1;
+                starter.disabled = false;
+                
+                if((seconds !==0 || milliseconds !== 0 || minutes !== 0 || hours !== 0)){
+                    pauser.disabled = true;
+                    clearInterval(repeat);
+                    console.log(hours, minutes, seconds, milliseconds,"lp",lp);
+                }
+        })
+        let lapbox = document.getElementById('laps');
+        let lapno = 1;
+        lap.addEventListener('click',()=>{
+                if((seconds !==0 || milliseconds !== 0 || minutes !== 0 || hours !== 0) && lp===0){
+                    let temp = milliseconds-1;
+                    if(milliseconds===0){
+                        temp = milliseconds;
+                    }
+                    const lapper = document.createElement('li');
+                    lapper.innerHTML = `Lap ${lapno} -> ${hours} : ${minutes} : ${seconds}.${temp}`;
+                    console.log(hours,minutes,seconds,temp);
+                    lapbox.append(lapper)
+                    lapno++;
+                } 
+        });
+        reset.addEventListener('click',()=>{
+                starter.disabled = false;
+                pauser.disabled = false;
+                clearInterval(repeat);
+                s.innerHTML = `00`;
+                m.innerText = `00`;
+                h.innerText = `00`;
+                ms.innerText = "";
+                milliseconds=0;
+                seconds=0;
+                minutes=0;
+                hours=0;
+                console.log(hours, minutes, seconds, milliseconds);
+                lapbox.innerHTML ="";
+                lapno = 1;
+        });
+        starter.addEventListener('click',start);
+    </script>
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #stopwatch {
+            text-align: center;
+        }
+
+        #time {
+            font-size: 3em;
+            margin-bottom: 20px;
+            font-family: 'Bungee Spice', sans-serif;
+        }
+
+        #buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.5em;
+            cursor: pointer;
+            background-color: rgba(197, 122, 122, 0.751);
+            border-radius: 8px;
+            border: none;
+        }
+
+        button:hover{
+            background-color: rgb(234, 67, 67);
+            box-shadow: 0px 0px 10px rgb(234, 67, 67);
+        }
+
+        button:active{
+            transform: translateY(2px);
+        }
+        #laps{
+            margin-top: 20px;
+            list-style-type: none;
+            
+        }
+        #laps li{
+            margin-bottom: 10px;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    <div id="stopwatch">
+        <div id="time">00:00:00</div>
+        <div id="buttons">
+            <button onclick="startOrResume()">Start</button>
+            <button onclick="pause()">Pause</button>
+            <button onclick="reset()">Reset</button>
+            <button onclick="lap()">Lap</button>
+        </div>
+        <ul id="laps"></ul>
+    </div>
+
+    <script>
+        let timer;
+        let isRunning = false;
+        let isPaused = false;
+        let startTime;
+        let elapsedTime = 0;
+        let lapCount = 1;
+
+        function startOrResume() {
+            if (!isRunning && !isPaused) {
+                start();
+            } else if (isPaused) {
+                resume();
+            }
+        }
+
+        function start() {
+            isRunning = true;
+            startTime = Date.now() - (elapsedTime > 0 ? elapsedTime : 0);
+            timer = setInterval(updateTime, 10);
+        }
+
+        function resume() {
+            isPaused = false;
+            start();
+        }
+
+        function pause() {
+            if (isRunning) {
+                isRunning = false;
+                isPaused = true;
+                clearInterval(timer);
+            }
+        }
+
+        function reset() {
+            pause();
+            document.getElementById('time').textContent = '00:00:00';
+            lapCount = 1;
+            document.getElementById('laps').innerHTML = '';
+        }
+
+        function lap() {
+            if (isRunning) {
+                const currentTime = Date.now() - startTime;
+                const formattedTime = formatTime(currentTime);
+
+                const lapItem = document.createElement('li');
+                lapItem.textContent = `Lap ${lapCount}: ${formattedTime}`;
+                document.getElementById('laps').appendChild(lapItem);
+
+                lapCount++;
+            }
+        }
+
+        function updateTime() {
+            const currentTime = Date.now() - startTime;
+            elapsedTime = currentTime;
+            const formattedTime = formatTime(currentTime);
+            document.getElementById('time').textContent = formattedTime;
+        }
+
+        function formatTime(time) {
+            const hours = Math.floor(time / (60 * 60 * 1000));
+            const minutes = Math.floor((time % (60 * 60 * 1000)) / (60 * 1000));
+            const seconds = Math.floor((time % (60 * 1000)) / 1000);
+            const milliseconds = Math.floor((time % 1000) / 10);
+
+            const formattedHours = padNumber(hours);
+            const formattedMinutes = padNumber(minutes);
+            const formattedSeconds = padNumber(seconds);
+            const formattedMilliseconds = padNumber(milliseconds);
+
+            return `${formattedHours}:${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`;
+        }
+
+        function padNumber(number) {
+            return number < 10 ? `0${number}` : number;
+        }
+    </script>
+</body>
+</html>
+ -->
